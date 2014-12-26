@@ -29,7 +29,7 @@ class WeakClassifier{
 			int* w = new int[trainData.rows];
 			for (int i = 0; i < trainData.rows; i++){
 				d[i] = diff(trainData.row(i));
-				w[i] = weights.at<float>(i);
+				w[i] = weights.at<double>(i);
 			}
 
 			double opt_error = 0.5;
