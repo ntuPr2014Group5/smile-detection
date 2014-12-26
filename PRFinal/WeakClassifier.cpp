@@ -38,13 +38,13 @@ class WeakClassifier{
 				double error = 0.;
 				int parity = 1;
 				for (int i = 0; i < trainData.rows; i++){
-					if (parity*(d[i] - theta) < 0)
+					if (d[i] - theta < 0)
 						error += w[i];
 				}
 
 				if (error > 0.5){
 					parity *= -1;
-					error = 1 - error;
+					error = 1. - error;
 				}
 
 				if (error < opt_error){
