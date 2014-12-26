@@ -55,6 +55,7 @@ class WeakClassifier{
 			}
 			return opt_error;
 		}
+
 		double predict(const Mat& input){
 			return (_parity*diff(input) < _parity*_theta) ? 1. : 0.;
 		}
