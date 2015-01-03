@@ -73,8 +73,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="WeakClassifier.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyAdaBoost.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyAdaBoost.h" />
+    <ClInclude Include="WeakClassifier.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
