@@ -28,7 +28,7 @@ void MyAdaBoost::train(const Mat& samples, const Mat& labels, const int numWeak)
 
 		if (err >= .5){
 			cout << "Total weak count is: " << i << endl;
-			_alpha.resize(i+1);
+			_alpha.resize(i);
 			break;
 		}
 
