@@ -14,13 +14,7 @@ using namespace cv;
 #define OFFSET(x,y) (y*WIDTH + x)
 #define TOPOINT(x) (Point(x%WIDTH, x/WIDTH))
 
-const int NumTrainData = 100;
 const char* ModelDirectory = "Models\\";
-
-// assume input features are gray images folded into row vectors
-Mat trainData(100, DIM, CV_8UC1);
-Mat labels(100, 1, CV_8UC1);
-
 
 class WeakClassifier{
 	public:
@@ -113,8 +107,6 @@ class WeakClassifier{
 		inline int diff(const Mat& input){
 			return input.at<uchar>(OFFSET(_pixels[0].x, _pixels[0].y)) - input.at<uchar>(OFFSET(_pixels[1].x, _pixels[1].y));
 		}
-
-
 };
 
 bool isExisted(vector<WeakClassifier>* weakVector, const int i, const int j){
