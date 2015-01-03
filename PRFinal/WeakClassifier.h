@@ -92,8 +92,10 @@ class WeakClassifier{
 
 		void load(int index){
 			FileStorage fs(ModelDirectory + to_string(index) + ".mod", FileStorage::READ);
-			if(!fs.isOpened())
+			if(!fs.isOpened()){
+				cout << "Cannot open model " << index << endl;
 				return;
+			}
 
 			FileNode model = fs["Model"];
 			_pixels[0] = Point(model["p0_x"], model["p0_y"]);
