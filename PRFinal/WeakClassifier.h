@@ -4,9 +4,7 @@
 #include <core/core.hpp>
 using namespace cv;
 
-extern bool isExisted(vector<WeakClassifier>* weakVector, const int i, const int j);
-
-extern double getOptimalWeakClassifier(vector<WeakClassifier>* weakVector, const Mat& trainData, const Mat& labels, const Mat& weights);
+extern const char* ModelDirectory;
 
 class WeakClassifier{
 	public:
@@ -31,5 +29,9 @@ class WeakClassifier{
 
 		int diff(const Mat& input);
 };
+
+extern bool isExisted(vector<WeakClassifier>* weakVector, const int i, const int j);
+
+extern double getOptimalWeakClassifier(vector<WeakClassifier>* weakVector, const Mat& trainData, const Mat& labels, const Mat& weights);
 
 #endif
