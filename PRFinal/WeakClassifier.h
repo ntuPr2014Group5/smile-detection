@@ -102,6 +102,8 @@ class WeakClassifier{
 			_parity = (int)model["parity"];
 			fs.release();
 		}
+
+		friend bool isExisted(vector<WeakClassifier>*, const int, const int);
 	private:
 		Point _pixels[2];
 		int _theta, _parity;
@@ -109,7 +111,20 @@ class WeakClassifier{
 		inline int diff(const Mat& input){
 			return input.at<uchar>(OFFSET(_pixels[0].x, _pixels[0].y)) - input.at<uchar>(OFFSET(_pixels[1].x, _pixels[1].y));
 		}
+
+
 };
+
+bool isExisted(vector<WeakClassifier>* weakVector, const int i, const int j){
+	for (int idx = 0; idx < weakVector->size(); idx++){
+		WeakClassifier w = (*weakVector)[idx];
+		int of1 = OFFSET(w._pixels[0].x, w._pixels[0].y);
+		int of2 = OFFSET(w._pixels[1].x, w._pixels[1].y);
+		if ( (of1 == i && of2 == j) || (of1 == j && of2 == i) )
+			return true;
+	}
+	return false;
+}
 
 double getOptimalWeakClassifier(vector<WeakClassifier>* weakVector, const Mat& trainData, const Mat& labels, const Mat& weights){
 	CV_Assert(trainData.cols == DIM && trainData.type() == CV_8UC1);
@@ -119,6 +134,9 @@ double getOptimalWeakClassifier(vector<WeakClassifier>* weakVector, const Mat& t
 	WeakClassifier opt_weak, weak;
 	for (int i = 0; i < trainData.cols; i++){
 		for (int j = 0; j < i; j++){
+			if (isExisted(weakVector, i, j))
+				continue;
+
 			weak.resetTo(TOPOINT(i), TOPOINT(j));
 			double err = weak.train(trainData, labels, weights);
 
