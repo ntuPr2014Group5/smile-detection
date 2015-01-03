@@ -65,6 +65,8 @@ double WeakClassifier::train(const Mat& trainData, const Mat& labels, const Mat&
 			_parity = parity;
 		}
 	}
+	delete []d;
+	delete []w;
 	return opt_error;
 }
 

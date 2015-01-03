@@ -24,6 +24,7 @@ void MyAdaBoost::train(const Mat& samples, const Mat& labels, const int numWeak)
 	cout << "Start Training" << endl;
 	for (int i = 0; i < numWeak; i++){
 		normalizeWeight();
+		cout << "Training Weak Classifier: " << i << endl;
 		double err = getOptimalWeakClassifier(&_weaks, samples, labels, _weights);
 
 		if (err >= .5){
