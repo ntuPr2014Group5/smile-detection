@@ -18,12 +18,13 @@ using namespace cv;
 using namespace std;
 string int2str(int &i);
 void train();
-void classify();
+void verify();
+void demo();
 
 int main(int argc, char** argv)
 {
-	classify();
-
+	//verify();
+	demo();
 	return EXIT_SUCCESS;
 }
 
@@ -86,7 +87,24 @@ void train(){
 	svm.train_auto(samples, label);
 }
 
-void classify(){
+void demo(){
+	MyClassifier svm;
+	svm.load();
+
+	for(int i = 1; i <= 100; i++, i++){
+		string inputName = int2str(i) + ".jpg";		
+		Mat image = imread(inputName, CV_LOAD_IMAGE_GRAYSCALE);	
+
+		if (!image.data)
+			return;
+
+		image = image.reshape(0, 1);
+
+		cout << svm.classify(image) << endl;
+	}
+}
+
+void verify(){
 	int idx = 2001;
 	MyClassifier svm;
 	svm.load();
