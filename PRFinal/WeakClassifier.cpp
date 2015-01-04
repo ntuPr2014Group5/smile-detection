@@ -4,6 +4,7 @@
 using namespace std;
 
 #include <core/core.hpp>
+#include <gpu/gpu.hpp>
 using namespace cv;
 
 #include "WeakClassifier.h"
@@ -15,6 +16,10 @@ using namespace cv;
 #define TOPOINT(x) (Point(x%WIDTH, x/WIDTH))
 
 const char* ModelDirectory = "Models\\";
+gpu::GpuMat g_trainData;
+gpu::GpuMat g_labels;
+gpu::GpuMat g_weights;
+gpu::GpuMat d;
 
 WeakClassifier::WeakClassifier(){
 	_theta = 0;
@@ -36,12 +41,14 @@ const WeakClassifier& WeakClassifier::operator=(const WeakClassifier& w){
 	return *this;
 }
 
-double WeakClassifier::train(const Mat& trainData, const Mat& labels, const Mat& weights){
+inline double WeakClassifier::train(const Mat& trainData, const Mat& labels, const Mat& weights){
 	int* d = new int[trainData.rows];
-	int* w = new int[trainData.rows];
+	double* w = new double[trainData.rows];
+	double* l = new double[trainData.rows];
 	for (int i = 0; i < trainData.rows; i++){
 		d[i] = diff(trainData.row(i));
 		w[i] = weights.at<double>(i);
+		l[i] = labels.at<double>(i);
 	}
 
 	double opt_error = 0.5;
@@ -50,8 +57,8 @@ double WeakClassifier::train(const Mat& trainData, const Mat& labels, const Mat&
 		double err = 0.;
 		int parity = 1;
 		for (int i = 0; i < trainData.rows; i++){
-			if (d[i] - theta < 0)
-				err += w[i];
+			double h = (d[i] - theta) < 0 ? 1. : 0.;
+			err += abs(h - l[i]) > 0. ? w[i] : 0.;
 		}
 
 		if (err > 0.5){
@@ -67,6 +74,40 @@ double WeakClassifier::train(const Mat& trainData, const Mat& labels, const Mat&
 	}
 	delete []d;
 	delete []w;
+	delete []l;
+	return opt_error;
+}
+
+double WeakClassifier::train_gpu(const Mat& trainData, const Mat& labels, const Mat& weights){
+	g_trainData.upload(trainData);
+	g_labels.upload(labels);
+	g_weights.upload(weights);
+	gpu::subtract(g_trainData.gpu::GpuMat::col(OFFSET(_pixels[0].x, _pixels[0].y)), g_trainData.gpu::GpuMat::col(OFFSET(_pixels[1].x, _pixels[1].y)), d);
+
+	double opt_error = 0.5;
+
+	for (int theta = 0; theta <= 255; theta++){
+		double err = 0.;
+		int parity = 1;
+		for (int i = 0; i < trainData.rows; i++){
+			double h = (d[i] - theta) < 0 ? 1. : 0.;
+			err += abs(h - l[i]) > 0. ? w[i] : 0.;
+		}
+
+		if (err > 0.5){
+			parity *= -1;
+			err = 1. - err;
+		}
+
+		if (err < opt_error){
+			opt_error = err;
+			_theta = theta;
+			_parity = parity;
+		}
+	}
+	delete []d;
+	delete []w;
+	delete []l;
 	return opt_error;
 }
 

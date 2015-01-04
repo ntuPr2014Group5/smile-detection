@@ -32,12 +32,19 @@ void MyAdaBoost::train(const Mat& samples, const Mat& labels, const int numWeak)
 			_alpha.resize(i);
 			break;
 		}
+		if (err == 0.){
+			cout << "Error equals zero" << endl;
+			_alpha.resize(i);
+			break;
+		}
 
 		_weaks.back().save(i);
 
 		double beta = err / (1. - err);
 		_weights *= pow(beta, 1 - err);
 		_alpha.at<double>(i) = -log10(beta);
+				
+		saveAlpha();
 	}
 	saveAlpha();
 	cout << "Training Process Terminated" << endl;

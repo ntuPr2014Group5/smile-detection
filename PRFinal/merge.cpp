@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	vector<int> compression_params;
 	compression_params.push_back(100);
 
-	const int input_max_size = 50;
+	const int input_max_size = 100;
 
 	Mat samples;
 	Mat vectorImg;
