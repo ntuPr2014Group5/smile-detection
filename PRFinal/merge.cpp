@@ -18,13 +18,13 @@ using namespace cv;
 using namespace std;
 string int2str(int &i);
 void train();
-void verify();
-void demo();
+void verify_hog_svm();
+void demo_hog_svm();
 
 int main(int argc, char** argv)
 {
-	//verify();
-	demo();
+	//verify_hog_svm();
+	demo_hog_svm();
 	return EXIT_SUCCESS;
 }
 
@@ -64,9 +64,6 @@ void train(){
 		samples.push_back(vectorImg);
 	}//end of loop
 
-	//
-	//
-	// ===================
 	Mat label(2*input_max_size, 1, 6);
 
 	for (int i = 0; i < input_max_size; i++)
@@ -87,11 +84,11 @@ void train(){
 	svm.train_auto(samples, label);
 }
 
-void demo(){
+void demo_hog_svm(){
 	MyClassifier svm;
 	svm.load();
 
-	for(int i = 1; i <= 100; i++, i++){
+	for(int i = 1; i <= 100; i++){
 		string inputName = int2str(i) + ".jpg";		
 		Mat image = imread(inputName, CV_LOAD_IMAGE_GRAYSCALE);	
 
@@ -104,7 +101,7 @@ void demo(){
 	}
 }
 
-void verify(){
+void verify_hog_svm(){
 	int idx = 2001;
 	MyClassifier svm;
 	svm.load();
