@@ -15,7 +15,7 @@ using namespace cv;
 #define OFFSET(x,y) (y*WIDTH + x)
 #define TOPOINT(x) (Point(x%WIDTH, x/WIDTH))
 
-const char* ModelDirectory = "Models_gpu\\";
+const char* ModelDirectory = "Models_2";
 gpu::GpuMat g_trainData;
 gpu::GpuMat g_labels;
 gpu::GpuMat g_weights;
@@ -160,10 +160,10 @@ double getOptimalWeakClassifier(vector<WeakClassifier>* weakVector, const Mat& t
 	CV_Assert(trainData.cols == DIM && trainData.type() == CV_8UC1);
 	CV_Assert(trainData.rows == labels.rows && labels.rows == weights.rows);
 
-	//g_trainData.upload(trainData);
-	//g_labels.upload(labels);
-	//g_weights.upload(weights);
-	//g_theta.upload(Mat::ones(g_trainData.rows, 1, CV_8U));
+	/*g_trainData.upload(trainData);
+	g_labels.upload(labels);
+	g_weights.upload(weights);
+	g_theta.upload(Mat::ones(g_trainData.rows, 1, CV_8U));*/
 
 	double opt_error = 0.5;
 	WeakClassifier opt_weak, weak;

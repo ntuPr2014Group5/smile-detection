@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "MyAdaBoost.h"
+#include "MyClassifier.h"
 
 #include <windows.h>
 #include <iostream>
@@ -16,19 +17,29 @@
 using namespace cv;
 using namespace std;
 string int2str(int &i);
+void train();
+void classify();
 
 int main(int argc, char** argv)
 {
-	vector<int> compression_params;
-	compression_params.push_back(100);
+	classify();
 
-	const int input_max_size = 100;
+	return EXIT_SUCCESS;
+}
+
+string int2str(int &i)
+{
+	string s;
+	stringstream ss(s);
+	ss << i;
+	return ss.str();
+}
+
+void train(){
+	const int input_max_size = 2000;
 
 	Mat samples;
 	Mat vectorImg;
-	const int vectorLength = 48 * 48;
-
-	string outputName = "sampleVectorImage.jpg";
 
 	//samples.resize( 4000, vectorLength );
 
@@ -52,11 +63,6 @@ int main(int argc, char** argv)
 		samples.push_back(vectorImg);
 	}//end of loop
 
-	//namedWindow("Display window", WINDOW_AUTOSIZE );// Create a window for display.
-	//imshow("Display window", samples );                   // Show our image inside it.
-	imwrite(outputName, samples, compression_params);  // loseless image save
-
-
 	//
 	//
 	// ===================
@@ -73,18 +79,33 @@ int main(int argc, char** argv)
 	}//end of loop
 
 
-	MyAdaBoost trainMachine;
+	//MyAdaBoost trainMachine;
+	//trainMachine.train(samples, label, 500);
 
-	trainMachine.train(samples, label, 500);
-
-	//waitKey(0);
-	return EXIT_SUCCESS;
+	MyClassifier svm;
+	svm.train_auto(samples, label);
 }
 
-string int2str(int &i)
-{
-	string s;
-	stringstream ss(s);
-	ss << i;
-	return ss.str();
+void classify(){
+	int idx = 2001;
+	MyClassifier svm;
+	svm.load();
+
+	for(int i = 0; i < 59; i++, idx++){
+		string inputName = "Smile48gray\\" + int2str(idx) + ".jpg";
+		Mat image = imread(inputName, CV_LOAD_IMAGE_GRAYSCALE);	
+
+		cout << svm.classify(image) << endl;
+		image = image.reshape(1, 48);
+		imshow("hi", image);
+		cvWaitKey(0);
+
+		inputName = "NonSmile48gray\\" + int2str(idx) + ".jpg";
+		image = imread(inputName, CV_LOAD_IMAGE_GRAYSCALE);
+
+		cout << svm.classify(image) << endl;
+		image = image.reshape(1, 48);
+		imshow("hi", image);
+		cvWaitKey(0);
+	}
 }

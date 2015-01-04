@@ -17,10 +17,12 @@
   <ItemGroup>
     <ClCompile Include="merge.cpp" />
     <ClCompile Include="MyAdaBoost.cpp" />
+    <ClCompile Include="MyClassifier.cpp" />
     <ClCompile Include="WeakClassifier.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyAdaBoost.h" />
+    <ClInclude Include="MyClassifier.h" />
     <ClInclude Include="WeakClassifier.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

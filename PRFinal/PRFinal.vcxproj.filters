@@ -24,12 +24,18 @@
     <ClCompile Include="WeakClassifier.cpp">
       <Filter>原始程式檔</Filter>
     </ClCompile>
+    <ClCompile Include="MyClassifier.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyAdaBoost.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="WeakClassifier.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="MyClassifier.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>
