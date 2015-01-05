@@ -4,6 +4,7 @@
 using namespace std;
 
 #include <core/core.hpp>
+#include <gpu/gpu.hpp>
 using namespace cv;
 
 #include "WeakClassifier.h"
@@ -14,7 +15,14 @@ using namespace cv;
 #define OFFSET(x,y) (y*WIDTH + x)
 #define TOPOINT(x) (Point(x%WIDTH, x/WIDTH))
 
-const char* ModelDirectory = "Models\\";
+const char* ModelDirectory = "Models_gpu\\";
+gpu::GpuMat g_trainData;
+gpu::GpuMat g_labels;
+gpu::GpuMat g_weights;
+gpu::GpuMat g_d;
+gpu::GpuMat g_theta;
+gpu::GpuMat g_h;
+gpu::GpuMat g_err;
 
 WeakClassifier::WeakClassifier(){
 	_theta = 0;
@@ -36,12 +44,14 @@ const WeakClassifier& WeakClassifier::operator=(const WeakClassifier& w){
 	return *this;
 }
 
-double WeakClassifier::train(const Mat& trainData, const Mat& labels, const Mat& weights){
+inline double WeakClassifier::train(const Mat& trainData, const Mat& labels, const Mat& weights){
 	int* d = new int[trainData.rows];
-	int* w = new int[trainData.rows];
+	double* w = new double[trainData.rows];
+	double* l = new double[trainData.rows];
 	for (int i = 0; i < trainData.rows; i++){
 		d[i] = diff(trainData.row(i));
 		w[i] = weights.at<double>(i);
+		l[i] = labels.at<double>(i);
 	}
 
 	double opt_error = 0.5;
@@ -50,8 +60,8 @@ double WeakClassifier::train(const Mat& trainData, const Mat& labels, const Mat&
 		double err = 0.;
 		int parity = 1;
 		for (int i = 0; i < trainData.rows; i++){
-			if (d[i] - theta < 0)
-				err += w[i];
+			double h = (d[i] - theta) < 0 ? 1. : 0.;
+			err += abs(h - l[i]) > 0. ? w[i] : 0.;
 		}
 
 		if (err > 0.5){
@@ -67,6 +77,38 @@ double WeakClassifier::train(const Mat& trainData, const Mat& labels, const Mat&
 	}
 	delete []d;
 	delete []w;
+	delete []l;
+	return opt_error;
+}
+
+double WeakClassifier::train_gpu(){	
+	gpu::subtract(g_trainData.gpu::GpuMat::col(OFFSET(_pixels[0].x, _pixels[0].y)), g_trainData.gpu::GpuMat::col(OFFSET(_pixels[1].x, _pixels[1].y)), g_d);
+	
+	double opt_error = 0.5;
+
+	for (int theta = 0; theta <= 255; theta++){
+		int parity = 1;
+
+		g_theta.setTo(theta);
+		gpu::compare(g_d, g_theta, g_h, CMP_LT);
+		g_h.convertTo(g_h, CV_64F);
+		gpu::absdiff(g_h, g_labels, g_h);
+		gpu::multiply(g_weights, g_h, g_err);
+		g_err.convertTo(g_err, CV_32F);
+		Scalar s_err = gpu::sum(g_err);
+		double err = s_err.val[0];
+
+		if (err > 0.5){
+			parity *= -1;
+			err = 1. - err;
+		}
+
+		if (err < opt_error){
+			opt_error = err;
+			_theta = theta;
+			_parity = parity;
+		}
+	}
 	return opt_error;
 }
 
@@ -118,6 +160,11 @@ double getOptimalWeakClassifier(vector<WeakClassifier>* weakVector, const Mat& t
 	CV_Assert(trainData.cols == DIM && trainData.type() == CV_8UC1);
 	CV_Assert(trainData.rows == labels.rows && labels.rows == weights.rows);
 
+	//g_trainData.upload(trainData);
+	//g_labels.upload(labels);
+	//g_weights.upload(weights);
+	//g_theta.upload(Mat::ones(g_trainData.rows, 1, CV_8U));
+
 	double opt_error = 0.5;
 	WeakClassifier opt_weak, weak;
 	for (int i = 0; i < trainData.cols; i++){
@@ -126,7 +173,9 @@ double getOptimalWeakClassifier(vector<WeakClassifier>* weakVector, const Mat& t
 				continue;
 
 			weak.resetTo(TOPOINT(i), TOPOINT(j));
-			double err = weak.train(trainData, labels, weights);
+			double err;
+			err = weak.train(trainData, labels, weights);
+			//err = weak.train_gpu();
 
 			if (err < opt_error){
 				opt_error = err;

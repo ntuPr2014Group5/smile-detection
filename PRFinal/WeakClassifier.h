@@ -16,6 +16,8 @@ class WeakClassifier{
 
 		double train(const Mat& trainData, const Mat& labels, const Mat& weights);
 
+		double train_gpu();
+
 		double predict(const Mat& input);
 
 		void save(int index);
