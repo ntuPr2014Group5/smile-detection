@@ -15,7 +15,7 @@ void MyAdaBoost::train(const Mat& samples, const Mat& labels, const int numWeak)
 	const int numPosSamples = countNonZero(labels);
 	const int numNegSamples = numSamples - numPosSamples;
 
-	_alpha = Mat::zeros(Size(numWeak, 1), CV_64FC1);
+	_alpha = Mat::zeros(numWeak, 1, CV_64FC1);
 	_weights = Mat::ones(labels.size(), CV_64FC1);
 	_weights /= 2.;
 	for (int i = 0; i < numSamples; i++)
@@ -52,7 +52,7 @@ void MyAdaBoost::train(const Mat& samples, const Mat& labels, const int numWeak)
 
 double MyAdaBoost::predict(const Mat& samples){
 	double pred = 0., sum = 0.;
-	for (int i = 0; i < _weights.rows; i++){
+	for (int i = 0; i < _alpha.rows; i++){
 		pred += _alpha.at<double>(i) * _weaks[i].predict(samples);
 		sum += _alpha.at<double>(i);
 	}
@@ -76,6 +76,11 @@ void MyAdaBoost::saveAlpha(){
 
 void MyAdaBoost::load(){
 	FileStorage fs(string(ModelDirectory) + WeightsFileName, FileStorage::READ);
+	if (!fs.isOpened()){
+		cout << "Cannot open weights file " << endl;
+		return;
+	}
+
 	fs["Alpha"] >> _alpha;
 	fs.release();
 	for (int i = 0; i < _alpha.rows; i++){
