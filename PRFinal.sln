@@ -1,12 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PRFinal", "PRFinal\PRFinal.vcxproj", "{E28CCBFA-C619-41DB-AF66-9A22AD883252}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_gpu|Win32 = Debug_gpu|Win32
 		Debug|Win32 = Debug|Win32
+		Release_gpu|Win32 = Release_gpu|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
@@ -14,6 +17,8 @@ Global
 		{E28CCBFA-C619-41DB-AF66-9A22AD883252}.Debug_gpu|Win32.Build.0 = Debug_gpu|Win32
 		{E28CCBFA-C619-41DB-AF66-9A22AD883252}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E28CCBFA-C619-41DB-AF66-9A22AD883252}.Debug|Win32.Build.0 = Debug|Win32
+		{E28CCBFA-C619-41DB-AF66-9A22AD883252}.Release_gpu|Win32.ActiveCfg = Release|Win32
+		{E28CCBFA-C619-41DB-AF66-9A22AD883252}.Release_gpu|Win32.Build.0 = Release|Win32
 		{E28CCBFA-C619-41DB-AF66-9A22AD883252}.Release|Win32.ActiveCfg = Release|Win32
 		{E28CCBFA-C619-41DB-AF66-9A22AD883252}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection

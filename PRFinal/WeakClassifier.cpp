@@ -15,7 +15,7 @@ using namespace cv;
 #define OFFSET(x,y) (y*WIDTH + x)
 #define TOPOINT(x) (Point(x%WIDTH, x/WIDTH))
 
-const char* ModelDirectory = "Models_2";
+const char* ModelDirectory = "Models\\";
 gpu::GpuMat g_trainData;
 gpu::GpuMat g_labels;
 gpu::GpuMat g_weights;
@@ -134,10 +134,11 @@ void WeakClassifier::load(int index){
 	}
 
 	FileNode model = fs["Model"];
-	_pixels[0] = Point(model["p0_x"], model["p0_y"]);
-	_pixels[1] = Point(model["p1_x"], model["p1_y"]);
-	_theta = (int)model["theta"];
-	_parity = (int)model["parity"];
+	FileNodeIterator it = model.begin();
+	_pixels[0] = Point((int)(*it)["p0_x"], (int)(*it)["p0_y"]);
+	_pixels[1] = Point((int)(*it)["p1_x"], (int)(*it)["p1_y"]);
+	_theta = (int)(*it)["theta"];
+	_parity = (int)(*it)["parity"];
 	fs.release();
 }
 
