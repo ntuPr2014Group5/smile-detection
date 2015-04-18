@@ -56,7 +56,7 @@ double MyAdaBoost::predict(const Mat& samples){
 		pred += _alpha.at<double>(i) * _weaks[i].predict(samples);
 		sum += _alpha.at<double>(i);
 	}
-	return (pred >= sum/2.) ? 1. : 0.;
+	return (pred - sum/2.);
 }
 
 void MyAdaBoost::normalizeWeight(){
